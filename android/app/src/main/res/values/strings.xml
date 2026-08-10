@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">AutoGeoloc</string>
+    <string name="gps_position">Getting GPS position…</string>
+    <string name="permission_denied">Location permission denied</string>
+    <string name="position_unknown">Position unknown</string>
+    <string name="position_error">Unable to get position</string>
+    <string name="settings_button">Settings</string>
+    <string name="urls_title">Publication URLs (http:// or https:// URL containing {lat} and {lon})</string>
+    <string name="url_hint">https://my-server/geoloc.php?lat={lat}&amp;lon={lon}</string>
+    <string name="url_add">Add</string>
+    <string name="url_edit">Edit</string>
+    <string name="url_remove">Remove</string>
+    <string name="invalid_url">URL must start with http:// or https:// and contain {lat} and {lon}</string>
+    <string name="refresh_title">Refresh interval (seconds)</string>
+    <string name="save">Save</string>
+    <string name="invalid_interval">Enter a positive integer number of seconds</string>
+    <string name="no_publication">No publication</string>
+    <string name="last_publication">Last publication: %1$s</string>
+    <string name="publish_error">Publication failed</string>
+    <string name="notification_channel">Geolocation</string>
+    <string name="notification_active">GPS position active</string>
+    <string name="website_link">Visit the AutoGeoloc website (APK, docs)</string>
+    <string name="website_url">https://sebasr.github.io/autogeoloc/</string>
+</resources>

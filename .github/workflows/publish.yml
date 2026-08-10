@@ -1,0 +1,81 @@
+name: Publish website
+
+on:
+  push:
+    branches: [ master ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Prepare site directory
+        run: |
+          mkdir -p site/doc
+          chmod +x android/gradlew
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Build APK
+        run: |
+          cd android
+          ./gradlew assembleDebug --no-daemon
+
+      - name: Convert README to HTML
+        uses: docker://pandoc/core:3
+        with:
+          args: -s README.md -o site/index.html --metadata title="AutoGeoloc — Automatic Geolocation System"
+
+      - name: Convert developer guide to HTML
+        uses: docker://pandoc/core:3
+        with:
+          args: -s doc/developer.md -o site/doc/developer.html --metadata title="AutoGeoloc — Developer guide"
+
+      - name: Convert user guide to HTML
+        uses: docker://pandoc/core:3
+        with:
+          args: -s doc/user.md -o site/doc/user.html --metadata title="AutoGeoloc — User guide"
+
+      - name: Fix documentation links (.md to .html)
+        run: |
+          sed -i 's/\.md"/\.html"/g' site/index.html site/doc/developer.html site/doc/user.html
+
+      - name: Assemble website content
+        run: |
+          cp android/app/build/outputs/apk/debug/app-debug.apk site/AutoGeoloc.apk
+          tar -czf site/autogeoloc-web.tar.gz web
+          cp Licence_CeCILL_V2.1-en.txt Licence_CeCILL_V2.1-fr.txt site/
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
